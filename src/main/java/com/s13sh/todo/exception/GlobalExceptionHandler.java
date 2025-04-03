@@ -1,4 +1,4 @@
-package com.s13sh.todo.controller;
+package com.s13sh.todo.exception;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import com.s13sh.todo.exception.UserExistsException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,5 +23,12 @@ public class GlobalExceptionHandler {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("message", exception.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+	}
+
+	@ExceptionHandler(InvalidException.class)
+	public ResponseEntity<Map<String, String>> handle(InvalidException exception) {
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		map.put("message", exception.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
 	}
 }
