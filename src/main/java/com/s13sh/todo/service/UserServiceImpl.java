@@ -1,5 +1,6 @@
 package com.s13sh.todo.service;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import com.s13sh.todo.dto.UserRequest;
 import com.s13sh.todo.entity.Session;
 import com.s13sh.todo.entity.User;
 import com.s13sh.todo.exception.InvalidException;
+import com.s13sh.todo.exception.InvalidSessionException;
 import com.s13sh.todo.exception.UserExistsException;
 import com.s13sh.todo.helper.AES;
 import com.s13sh.todo.helper.SessionStatus;
@@ -63,6 +65,26 @@ public class UserServiceImpl implements UserService {
 		} else
 			throw new InvalidException("Invalid Username");
 
+	}
+
+	@Override
+	public Map<String, String> logout(String sessionId, HttpSession session) {
+		if (sessionId != null) {
+			Session userSession = sessionRepository.findBySessionId(sessionId);
+			if (userSession != null) {
+				session.invalidate();
+				userSession.setStatus(SessionStatus.INVALIDATED);
+				userSession.setLoggedOutTime(LocalDateTime.now());
+				sessionRepository.save(userSession);
+				Map<String, String> map = new LinkedHashMap<String, String>();
+				map.put("message", "Logout Success");
+				return map;
+			} else {
+				throw new InvalidSessionException();
+			}
+		} else {
+			throw new InvalidSessionException();
+		}
 	}
 
 }

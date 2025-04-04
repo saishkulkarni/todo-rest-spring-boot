@@ -6,4 +6,6 @@ import com.s13sh.todo.entity.Session;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
+	Session findBySessionId(String sessionId);
+
 }
