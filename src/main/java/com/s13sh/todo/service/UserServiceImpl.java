@@ -46,13 +46,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Map<String, String> login(UserRequest request, HttpSession session) {
+		if(!sessionRepository.existsBySessionId(session.getId())) {
 		Optional<User> user = userRepository.findByUsername(request.getUsername());
 		if (user.isPresent()) {
 			if (request.getPassword().equals(AES.decrypt(user.get().getPassword()))) {
-
+				
 				Session userSession = new Session();
 				userSession.setSessionId(session.getId());
-				userSession.setUser_id(user.get().getId());
+				userSession.setUserId(user.get().getId());
 				userSession.setStatus(SessionStatus.ACTIVE);
 				sessionRepository.save(userSession);
 
@@ -64,7 +65,11 @@ public class UserServiceImpl implements UserService {
 				throw new InvalidException("Invalid Password");
 		} else
 			throw new InvalidException("Invalid Username");
-
+		}else {
+			Map<String, String> map = new LinkedHashMap<String, String>();
+			map.put("message", "Aleady a Session is Active, Logout that to Login again");
+			return map;
+		}
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.s13sh.todo.service;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import com.s13sh.todo.dto.TaskRequest;
 import com.s13sh.todo.entity.Session;
 import com.s13sh.todo.entity.Task;
 import com.s13sh.todo.exception.InvalidSessionException;
+import com.s13sh.todo.exception.NotAllowedException;
+import com.s13sh.todo.exception.ResourceNotFound;
 import com.s13sh.todo.helper.SessionStatus;
 import com.s13sh.todo.repository.SessionRepository;
 import com.s13sh.todo.repository.TaskRepository;
@@ -27,7 +30,7 @@ public class TaskServiceImpl implements TaskService {
 	public Map<String, Object> addTask(TaskRequest request, String sessionId) {
 		if (checkSession(sessionId)) {
 			Session userSession = sessionRepository.findBySessionId(sessionId);
-			Task task = new Task(request, userSession.getUser_id());
+			Task task = new Task(request, userSession.getUserId());
 			taskRepository.save(task);
 			Map<String, Object> map = new LinkedHashMap<String, Object>();
 			map.put("message", "Task Added Success");
@@ -46,4 +49,37 @@ public class TaskServiceImpl implements TaskService {
 		}
 		return false;
 	}
+
+	@Override
+	public Map<String, Object> fethcAlltasks(String sessionId) {
+		if (checkSession(sessionId)) {
+			Session userSession = sessionRepository.findBySessionId(sessionId);
+			System.err.println(userSession.getUserId());
+			List<Task> tasks = taskRepository.findByUserId(userSession.getUserId());
+			if (!tasks.isEmpty()) {
+				Map<String, Object> map = new LinkedHashMap<String, Object>();
+				map.put("message", "Task Found Success");
+				map.put("data", tasks);
+			}
+			throw new ResourceNotFound("No Records Present");
+		}
+		throw new InvalidSessionException();
+	}
+
+	@Override
+	public Map<String, Object> fetchTaskById(String sessionId, Long id) {
+		if (checkSession(sessionId)) {
+			Session userSession = sessionRepository.findBySessionId(sessionId);
+			Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFound("No Task from Id :" + id));
+			System.err.println(task.getUserId()+"   "+userSession.getUserId());
+			if(task.getUserId()==userSession.getUserId()) {
+				Map<String, Object> map = new LinkedHashMap<String, Object>();
+				map.put("message", "Task Found Success");
+				map.put("data", task);
+			}
+			throw new NotAllowedException("You can See Task only that You have added");
+		}
+		throw new InvalidSessionException();
+	}
+
 }

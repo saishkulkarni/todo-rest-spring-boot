@@ -8,4 +8,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
 	Session findBySessionId(String sessionId);
 
+	boolean existsBySessionId(String id);
+
 }

@@ -10,4 +10,8 @@ public interface TaskService {
 
 	Map<String, Object> addTask(@Valid TaskRequest request, String sessionId);
 
+	Map<String, Object> fethcAlltasks(String sessionId);
+
+	Map<String, Object> fetchTaskById(String sessionId, Long id);
+
 }

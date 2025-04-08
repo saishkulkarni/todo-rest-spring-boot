@@ -48,4 +48,18 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
 	}
 
+	@ExceptionHandler(ResourceNotFound.class)
+	public ResponseEntity<Map<String, String>> handle(ResourceNotFound exception) {
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		map.put("message", exception.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+	}
+
+	@ExceptionHandler(NotAllowedException.class)
+	public ResponseEntity<Map<String, String>> handle(NotAllowedException exception) {
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		map.put("message", exception.getMessage());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(map);
+	}
+
 }

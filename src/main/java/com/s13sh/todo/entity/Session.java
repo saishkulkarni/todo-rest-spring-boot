@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.s13sh.todo.helper.SessionStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,7 +24,7 @@ public class Session {
 	@Id
 	private Long id;
 	private String sessionId;
-	private Long user_id;
+	private Long userId;
 	@CreationTimestamp
 	private LocalDateTime loggedInTime;
 	private LocalDateTime loggedOutTime;

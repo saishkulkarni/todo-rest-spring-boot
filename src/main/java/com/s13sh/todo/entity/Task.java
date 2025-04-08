@@ -15,11 +15,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Task {
 
 	@Id
@@ -33,12 +35,12 @@ public class Task {
 	private LocalDateTime createdAt;
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
-	private Long user_id;
+	private Long userId;
 
 	public Task(TaskRequest request, Long user_id) {
 		this.name = request.getName();
 		this.description = request.getDescription();
 		this.status = TaskStatus.valueOf(request.getStatus());
-		this.user_id = user_id;
+		this.userId = user_id;
 	}
 }
